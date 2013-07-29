@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.sap.cloud.samples</groupId>
+		<artifactId>com.sap.cloud.samples.parent</artifactId>
+		<version>0.1.0-SNAPSHOT</version>
+		<relativePath>../com.sap.cloud.samples.parent</relativePath>
+	</parent>
+
+	<groupId>com.sap.cloud.samples.welcome</groupId>
+	<artifactId>com.sap.cloud.samples.welcome</artifactId>
+	<packaging>war</packaging>
+	<name>SAP Hana Cloud welcome application</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.sap.core.distro.jpaas</groupId>
+			<artifactId>neo-sdk-platform-api</artifactId>
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<finalName>cloudsamples</finalName>
+		<resources>
+			<resource>
+				<directory>WebContent/</directory>
+				<includes>
+					<include>index.html</include>
+				</includes>
+				<targetPath>${project.build.directory}/${project.build.finalName}</targetPath>
+				<filtering>true</filtering>
+			</resource>
+			<resource>
+				<directory>src/main/resources/</directory>
+			</resource>
+		</resources>
+	<plugins>
+	<plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-dependency-plugin</artifactId>
+		<executions>
+			<execution>
+				<id>build-classpath</id>
+				<phase>generate-resources</phase>
+				<goals>
+					<goal>build-classpath</goal>
+				</goals>
+				<configuration>
+					<prefix>WEB-INF/lib</prefix>
+					<pathSeparator>,</pathSeparator>
+					<includeScope>runtime</includeScope>
+					<fileSeparator>/</fileSeparator>
+					<indentSize>2</indentSize>
+					<lineLength>80</lineLength>
+					<outputFilterFile>true</outputFilterFile>
+					<outputFile>${project.build.directory}/classpath.properties</outputFile>
+				</configuration>
+			</execution>
+		</executions>
+	</plugin>
+	<plugin>
+		<groupId>org.codehaus.mojo</groupId>
+		<version>1.0-tc</version>
+		<artifactId>properties-maven-plugin</artifactId>
+		<executions>
+			<execution>
+				<phase>generate-resources</phase>
+				<goals>
+					<goal>read-project-properties</goal>
+				</goals>
+				<configuration>
+					<files>
+						<file>${project.build.directory}/classpath.properties</file>
+					</files>
+				</configuration>
+			</execution>
+		</executions>
+	</plugin>
+	<plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-war-plugin</artifactId>
+		<configuration>
+			<webResources>
+				<resource>
+					<directory>WebContent</directory>
+					<targetPath>/</targetPath>
+				</resource>
+				<resource>
+					<directory>${project.build.directory}/${project.build.finalName}</directory>
+					<includes>
+						<include>index.jsp</include>
+					</includes>
+				</resource>
+			</webResources>
+			<webXml>WebContent/WEB-INF/web.xml</webXml>
+			<archive>
+				<manifestFile>WebContent/META-INF/MANIFEST.MF</manifestFile>
+				<manifestEntries>
+					<Bundle-ClassPath>WEB-INF/classes/, ${classpath}</Bundle-ClassPath>
+				</manifestEntries>
+			</archive>
+		</configuration>
+		<version>2.2</version>
+	</plugin>	
+	</plugins>
+	</build>
+</project>
